@@ -1,0 +1,40 @@
+{
+  "name": "netlify-webhook-repeater",
+  "version": "1.0.0",
+  "description": "Function to relay webhook requests from netlify to slack",
+  "main": "dist/index.js",
+  "author": "Masaharu Shimizu",
+  "license": "MIT",
+  "devDependencies": {
+    "@slack/types": "^2.2.0",
+    "@types/aws-lambda": "^8.10.85",
+    "@types/eslint-plugin-prettier": "^3.1.0",
+    "@types/node": "^16.11.7",
+    "@types/prettier": "^2.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "aws-sam-webpack-plugin": "^0.11.0",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.4.4",
+    "webpack": "^5.64.0",
+    "webpack-cli": "^4.9.1"
+  },
+  "scripts": {
+    "dev": "yarn build && sam local start-api --env-vars env.json",
+    "clean": "rimraf .aws-sam",
+    "webpack": "webpack-cli",
+    "build": "NODE_ENV=development npm-run-all clean webpack",
+    "build:watch": "NODE_ENV=development webpack --watch",
+    "build:prod": "NODE_ENV=production npm-run-all clean webpack",
+    "deploy": "NODE_ENV=production yarn build:prod && sam deploy --parameter-overrides SlackWebhookUrl=$SLACK_WEBHOOK_URL"
+  },
+  "dependencies": {
+    "@slack/webhook": "^6.0.0"
+  }
+}

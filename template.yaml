@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  netlify-webhook-repeater
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  NetlifyWebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: index.lambdaHandler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        NetlifyWebhook:
+          Type: Api
+          Properties:
+            Path: /hook
+            Method: post
+      Environment:
+        Variables:
+          SLACK_WEBHOOK_URL: !Ref SlackWebhookUrl
+
+Parameters:
+  SlackWebhookUrl:
+    Type: String
+
+Outputs:
+  NetlifyWebhookApi:
+    Description: "API Gateway endpoint URL for Prod stage for Netlify Webhook function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hook/"
+  NetlifyWebhookFunction:
+    Description: "Netlify Webhook Lambda Function ARN"
+    Value: !GetAtt NetlifyWebhookFunction.Arn
+  NetlifyWebhookFunctionIamRole:
+    Description: "Implicit IAM Role created for Netlify Webhook function"
+    Value: !GetAtt NetlifyWebhookFunctionRole.Arn
